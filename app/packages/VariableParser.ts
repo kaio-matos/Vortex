@@ -16,6 +16,11 @@ export class VariableParser {
             const matchedKey = match[1];
             const variable = this.variables?.[matchedKey];
 
+            if (!variable) {
+                throw new Error(
+                    `Variable not found, please make sure to provide "${matchedKey}" variableq`
+                );
+            }
             result = result.replace(matchedString, String(variable));
         }
 
