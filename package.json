@@ -1,0 +1,16 @@
+{
+    "name": "min-api-client",
+    "version": "1.0.0",
+    "description": "",
+    "scripts": {
+        "build": "pnpm tsc && node ./dist",
+        "dev": "pnpm nodemon -e ts --exec \"pnpm build\""
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "nodemon": "^3.0.2",
+        "typescript": "^5.3.3"
+    }
+}
