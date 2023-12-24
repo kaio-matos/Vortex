@@ -5,7 +5,7 @@
     "scripts": {
         "build": "pnpm tsc",
         "run-build": "node ./dist $ARGUMENTS",
-        "dev": "pnpm nodemon -e ts --exec \"pnpm build && pnpm run-build\""
+        "dev": "pnpm nodemon -e ts --exec \"pnpm ts-node ./app $ARGUMENTS\""
     },
     "keywords": [],
     "author": "",
@@ -13,6 +13,7 @@
     "devDependencies": {
         "@types/node": "^20.10.5",
         "nodemon": "^3.0.2",
+        "ts-node": "^10.9.2",
         "typescript": "^5.3.3"
     }
 }
