@@ -11,10 +11,8 @@ export namespace Vortex {
     }
 
     export class Client {
-        parser: VariableParser;
-
         constructor(
-            parser: VariableParser,
+            protected parser: VariableParser,
             protected environment: Environment
         ) {
             this.parser = parser;
