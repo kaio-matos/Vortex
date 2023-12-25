@@ -1,5 +1,6 @@
 import { VariableParser } from "./VariableParser";
 import { Environment as PackageEnvironment } from "./Environment";
+import { argv, env } from "process";
 
 export namespace Vortex {
     export interface Configuration {
@@ -14,19 +15,23 @@ export namespace Vortex {
     export interface Flags {}
 
     export class Environment {
+        private _environment: PackageEnvironment<Flags>;
+
         endpoint: URL | undefined;
-        flags: Flags;
 
         constructor(
-            protected argv: string[],
-            protected env: NodeJS.ProcessEnv
+            protected rawArgv: string[],
+            protected rawEnv: NodeJS.ProcessEnv
         ) {
-            const Env = new PackageEnvironment<Flags>(argv, env);
+            this._environment = new PackageEnvironment<Flags>(argv, env);
 
             try {
-                this.endpoint = new URL(Env.app_arguments[0]);
+                this.endpoint = new URL(this._environment.app_arguments[0]);
             } catch {}
-            this.flags = Env.app_flags;
+        }
+
+        get flags() {
+            return this._environment.app_flags;
         }
     }
 
