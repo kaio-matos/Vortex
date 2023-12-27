@@ -1,5 +1,6 @@
 import { VariableParser } from "./VariableParser";
 import { Environment as PackageEnvironment } from "./Environment";
+import { AppStorage } from "./AppStorage";
 import { argv, env } from "process";
 
 export namespace Vortex {
@@ -40,6 +41,7 @@ export namespace Vortex {
 
         constructor(
             protected parser: VariableParser,
+            protected storage: AppStorage,
             protected config?: Configuration
         ) {
             this.headers = config?.headers;
@@ -64,6 +66,19 @@ export namespace Vortex {
                     ...this.config?.headers,
                     ...configuration.headers,
                 },
+            });
+        }
+
+        store(url: string) {
+            if (!url) throw new Error("You must write a valid endpoint!");
+
+            const parsedURL = new URL(this.parser.parse(url));
+
+            const folder = parsedURL.pathname.slice(1);
+            const file = (parsedURL.pathname.split("/").pop() ?? "_") + ".json";
+
+            this.storage.store(folder, file, {
+                url,
             });
         }
     }
