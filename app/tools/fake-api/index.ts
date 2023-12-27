@@ -1,7 +1,7 @@
 import { Server } from "./server";
 import products from "./database/products.json";
 
-class FakeAPI {
+export class FakeAPI {
     protected server: Server;
 
     constructor() {
@@ -16,5 +16,3 @@ class FakeAPI {
         });
     }
 }
-
-new FakeAPI();
