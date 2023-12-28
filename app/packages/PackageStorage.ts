@@ -1,7 +1,7 @@
 import path from "node:path";
 import fs from "fs";
 
-export class AppStorage {
+export class PackageStorage {
     constructor(protected path = ".vortex") {}
 
     store<T extends object>(folder: string, filename: string, data: T) {

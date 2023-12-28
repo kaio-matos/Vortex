@@ -1,7 +1,6 @@
-import { url } from "node:inspector";
 import readline from "node:readline";
 
-export class CLI<T extends object> {
+export class PackageCLI<T extends object> {
     rl: readline.Interface;
 
     constructor(protected enumerator: T) {

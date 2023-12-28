@@ -1,7 +1,6 @@
-import { VariableParser } from "./VariableParser";
-import { Environment as PackageEnvironment } from "./Environment";
-import { AppStorage } from "./AppStorage";
-import { argv, env } from "process";
+import { PackageVariableParser } from "./PackageVariableParser";
+import { PackageEnvironment } from "./PackageEnvironment";
+import { PackageStorage } from "./PackageStorage";
 
 export namespace Vortex {
     export interface Configuration {
@@ -24,7 +23,7 @@ export namespace Vortex {
             protected rawArgv: string[],
             protected rawEnv: NodeJS.ProcessEnv
         ) {
-            this._environment = new PackageEnvironment<Flags>(argv, env);
+            this._environment = new PackageEnvironment<Flags>(rawArgv, rawEnv);
 
             try {
                 this.endpoint = new URL(this._environment.app_arguments[0]);
@@ -40,8 +39,8 @@ export namespace Vortex {
         headers?: HeadersInit;
 
         constructor(
-            protected parser: VariableParser,
-            protected storage: AppStorage,
+            protected parser: PackageVariableParser,
+            protected storage: PackageStorage,
             protected config?: Configuration
         ) {
             this.headers = config?.headers;

@@ -1,9 +1,9 @@
 import { Vortex } from "./packages/Vortex";
-import { VariableParser } from "./packages/VariableParser";
-import { CLI } from "./packages/CLI";
+import { PackageVariableParser } from "./packages/PackageVariableParser";
+import { PackageCLI } from "./packages/PackageCLI";
 
 import { APIFork } from "./createAPIProcess";
-import { AppStorage } from "./packages/AppStorage";
+import { PackageStorage } from "./packages/PackageStorage";
 
 const parent = APIFork.parent();
 
@@ -12,8 +12,8 @@ enum Commands {
 }
 
 parent.listeners.onAPIReady = () => {
-    const Parser = new VariableParser(/__(\w{1,})__/g);
-    const Storage = new AppStorage();
+    const Parser = new PackageVariableParser(/__(\w{1,})__/g);
+    const Storage = new PackageStorage();
     const VortexEnvironment = new Vortex.Environment(process.argv, process.env);
     if (VortexEnvironment.endpoint) {
         const VortexClient = new Vortex.Client(Parser, Storage);
@@ -30,7 +30,7 @@ parent.listeners.onAPIReady = () => {
             },
         });
 
-        const cli = new CLI(Commands);
+        const cli = new PackageCLI(Commands);
 
         cli.question((command, args) => {
             const commands: Record<Commands, Function> = {

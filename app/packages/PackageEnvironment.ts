@@ -1,4 +1,4 @@
-export class Environment<Flags extends object> {
+export class PackageEnvironment<Flags extends object> {
     runtime: string;
     executable: string;
     app_arguments: string[];

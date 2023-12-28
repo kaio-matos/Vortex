@@ -1,4 +1,4 @@
-export class VariableParser {
+export class PackageVariableParser {
     protected variables: Record<string, string | number> = {};
 
     constructor(protected pattern: RegExp) {}
