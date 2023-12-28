@@ -9,6 +9,7 @@ const parent = APIFork.parent();
 
 enum Commands {
     STORE = "store",
+    STORE_CONFIG = "store-config",
 }
 
 parent.listeners.onAPIReady = () => {
@@ -21,21 +22,25 @@ parent.listeners.onAPIReady = () => {
             path: VortexEnvironment.endpoint,
         });
     } else {
-        const VortexClient = new Vortex.Client(Parser, Storage, {
-            variables: {
-                baseUrl: "http://localhost:9292",
-            },
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        const VortexClient = new Vortex.Client(Parser, Storage);
 
         const cli = new PackageCLI(Commands);
 
         cli.question((command, args) => {
             const commands: Record<Commands, Function> = {
                 [Commands.STORE]: () => VortexClient.store(args[0]),
+                [Commands.STORE_CONFIG]: () => {
+                    try {
+                        const config = JSON.parse(
+                            args[0]
+                        ) as Vortex.EnvironmentConfiguration;
+                        VortexClient.storeConfig(config);
+                    } catch {
+                        console.log("Please submit a valid json!");
+                    }
+                },
             };
+
             // VortexClient.request({
             //     path: "__baseUrl__/products",
             // }).then((v) => v.json().then(console.log));

@@ -3,9 +3,9 @@ import { PackageEnvironment } from "./PackageEnvironment";
 import { PackageStorage } from "./PackageStorage";
 
 export namespace Vortex {
-    export interface Configuration {
+    export interface EnvironmentConfiguration {
+        headers?: Record<string, string>;
         variables?: Record<string, string | number>;
-        headers?: HeadersInit;
     }
 
     export interface RequestConfiguration extends RequestInit {
@@ -40,12 +40,26 @@ export namespace Vortex {
 
         constructor(
             protected parser: PackageVariableParser,
-            protected storage: PackageStorage,
-            protected config?: Configuration
+            protected storage: PackageStorage
         ) {
-            this.headers = config?.headers;
+            let data = storage.read<EnvironmentConfiguration>(
+                "config",
+                "config.json"
+            );
 
-            this.parser.setVariables(config?.variables ?? {});
+            if (!data) {
+                data = this.storeConfig({
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    variables: {
+                        baseUrl: "http://localhost:9292",
+                    },
+                });
+            }
+
+            this.headers = data?.headers;
+            this.parser.setVariables({ ...data?.variables });
         }
 
         request({ path, ...configuration }: RequestConfiguration) {
@@ -53,7 +67,7 @@ export namespace Vortex {
                 return fetch(this.parser.parse(path.href), {
                     ...configuration,
                     headers: {
-                        ...this.config?.headers,
+                        ...this.headers,
                         ...configuration.headers,
                     },
                 });
@@ -62,7 +76,7 @@ export namespace Vortex {
             return fetch(this.parser.parse(path), {
                 ...configuration,
                 headers: {
-                    ...this.config?.headers,
+                    ...this.headers,
                     ...configuration.headers,
                 },
             });
@@ -79,6 +93,15 @@ export namespace Vortex {
             this.storage.store(folder, file, {
                 url,
             });
+        }
+
+        storeConfig(data: EnvironmentConfiguration) {
+            const config = this.storage.store("config", "config.json", data);
+            this.headers = config.headers;
+            if (config.variables) {
+                this.parser.setVariables(config.variables);
+            }
+            return data;
         }
     }
 }

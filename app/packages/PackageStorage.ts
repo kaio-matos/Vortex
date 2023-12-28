@@ -15,5 +15,19 @@ export class PackageStorage {
             JSON.stringify(data),
             (err) => (err ? console.error(err) : null)
         );
+        return data;
+    }
+
+    read<T>(folder: string, filename: string): T | null {
+        try {
+            const buffer = fs.readFileSync(
+                path.resolve(this.path, folder, filename)
+            );
+
+            const jsonString = buffer.toString();
+            return JSON.parse(jsonString);
+        } catch (err) {
+            return null;
+        }
     }
 }
