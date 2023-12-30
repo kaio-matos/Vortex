@@ -1,5 +1,5 @@
 import { APIFork } from "./createAPIProcess";
-import { FakeAPI } from "./tools/fake-api";
+import { FakeAPI } from "./api";
 
 const child = APIFork.child();
 

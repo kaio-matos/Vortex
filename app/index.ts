@@ -2,7 +2,7 @@ import { Vortex } from "./packages/Vortex";
 import { PackageVariableParser } from "./packages/PackageVariableParser";
 import { PackageCLI } from "./packages/PackageCLI";
 
-import { APIFork } from "./createAPIProcess";
+import { APIFork } from "./tools/fake-api/createAPIProcess";
 import { PackageStorage } from "./packages/PackageStorage";
 
 const parent = APIFork.parent();
