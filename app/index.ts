@@ -10,11 +10,13 @@ const parent = APIFork.parent();
 enum Commands {
     STORE = "store",
     STORE_CONFIG = "store-config",
+    REQUEST = "request",
 }
 
 const docs: Record<Commands, string> = {
     [Commands.STORE]: "Stores a request configuration",
     [Commands.STORE_CONFIG]: "Stores a global configuration",
+    [Commands.REQUEST]: "Send an request for the specified endpoint",
 };
 
 parent.listeners.onAPIReady = () => {
@@ -44,11 +46,14 @@ parent.listeners.onAPIReady = () => {
                         console.log("Please submit a valid json!");
                     }
                 },
-            };
+                [Commands.REQUEST]: async () => {
+                    const path = args[0];
 
-            // VortexClient.request({
-            //     path: "__baseUrl__/products",
-            // }).then((v) => v.json().then(console.log));
+                    VortexClient.request({
+                        path,
+                    });
+                },
+            };
 
             commands[command]();
         });

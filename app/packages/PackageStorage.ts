@@ -10,12 +10,14 @@ export class PackageStorage {
         } catch {}
         const fd = fs.openSync(path.resolve(this.path, folder, filename), "w");
         fs.closeSync(fd);
-        fs.writeFile(
-            path.resolve(this.path, folder, filename),
-            JSON.stringify(data),
-            (err) => (err ? console.error(err) : null)
+        const filePath = path.resolve(this.path, folder, filename);
+        fs.writeFile(filePath, JSON.stringify(data), (err) =>
+            err ? console.error(err) : null
         );
-        return data;
+        return {
+            data: data,
+            dir: filePath,
+        };
     }
 
     read<T>(folder: string, filename: string): T | null {

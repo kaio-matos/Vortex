@@ -62,24 +62,33 @@ export namespace Vortex {
             this.parser.setVariables({ ...data?.variables });
         }
 
-        request({ path, ...configuration }: RequestConfiguration) {
-            if (path instanceof URL) {
-                return fetch(this.parser.parse(path.href), {
-                    ...configuration,
-                    headers: {
-                        ...this.headers,
-                        ...configuration.headers,
-                    },
-                });
-            }
+        async request({ path, ...configuration }: RequestConfiguration) {
+            const parsedPath =
+                path instanceof URL
+                    ? this.parser.parse(path.href)
+                    : this.parser.parse(path);
 
-            return fetch(this.parser.parse(path), {
+            const rawResponse = await fetch(parsedPath, {
                 ...configuration,
                 headers: {
                     ...this.headers,
                     ...configuration.headers,
                 },
             });
+
+            const json = await rawResponse.json();
+
+            const parsedURL = new URL(parsedPath);
+            const folder = parsedURL.pathname.slice(1);
+            const file = (parsedURL.pathname.split("/").pop() ?? "_") + ".json";
+
+            const { dir } = this.storage.store(
+                "responses/" + folder,
+                file,
+                json
+            );
+
+            console.log(`The response was saved in ${dir}`);
         }
 
         store(url: string) {
@@ -96,7 +105,11 @@ export namespace Vortex {
         }
 
         storeConfig(data: EnvironmentConfiguration) {
-            const config = this.storage.store("config", "config.json", data);
+            const { data: config } = this.storage.store(
+                "config",
+                "config.json",
+                data
+            );
             this.headers = config.headers;
             if (config.variables) {
                 this.parser.setVariables(config.variables);
