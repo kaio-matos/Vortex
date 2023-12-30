@@ -12,6 +12,11 @@ enum Commands {
     STORE_CONFIG = "store-config",
 }
 
+const docs: Record<Commands, string> = {
+    [Commands.STORE]: "Stores a request configuration",
+    [Commands.STORE_CONFIG]: "Stores a global configuration",
+};
+
 parent.listeners.onAPIReady = () => {
     const Parser = new PackageVariableParser(/__(\w{1,})__/g);
     const Storage = new PackageStorage();
@@ -24,7 +29,7 @@ parent.listeners.onAPIReady = () => {
     } else {
         const VortexClient = new Vortex.Client(Parser, Storage);
 
-        const cli = new PackageCLI(Commands);
+        const cli = new PackageCLI(Commands, docs);
 
         cli.question((command, args) => {
             const commands: Record<Commands, Function> = {

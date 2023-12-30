@@ -1,24 +1,40 @@
 import readline from "node:readline";
 
-export class PackageCLI<T extends object> {
+export class PackageCLI<T extends Record<string, string | number>> {
     rl: readline.Interface;
 
-    constructor(protected enumerator: T) {
+    constructor(
+        protected enumerator: T,
+        protected docs: Record<T[keyof T], string>
+    ) {
         this.rl = readline.createInterface({
             input: process.stdin,
             output: process.stdout,
         });
     }
 
-    question(handler: (command: T[keyof T], args: string[]) => void) {
-        const rl = this.rl;
-        const enumerator = this.enumerator;
+    help() {
+        for (const [key, doc] of Object.entries(this.docs)) {
+            console.info(`${key}: ${doc}\n`);
+        }
+    }
 
-        function qst() {
-            rl.question("> ", (answer) => {
+    question(handler: (command: T[keyof T], args: string[]) => void) {
+        const qst = () => {
+            this.rl.question("> ", (answer) => {
                 const [command, ...args] = answer.split(" ");
 
-                Object.values(enumerator).forEach((value) => {
+                if (answer === "exit") {
+                    process.exit(0);
+                    return;
+                }
+
+                if (answer === "--help") {
+                    this.help();
+                    return;
+                }
+
+                Object.values(this.enumerator).forEach((value) => {
                     if (command === value) {
                         handler(command as T[keyof T], args);
                     }
@@ -26,7 +42,7 @@ export class PackageCLI<T extends object> {
 
                 qst();
             });
-        }
+        };
 
         qst();
     }
