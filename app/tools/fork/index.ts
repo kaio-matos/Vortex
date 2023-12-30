@@ -54,6 +54,13 @@ export class Fork<Events extends ForkEvent> {
 
     parent() {
         const child_process = fork(this.modulePath, this.options);
+        process.on("beforeExit", () => child_process.kill());
+        process.on("exit", () => child_process.kill());
+        process.on("SIGINT", () => child_process.kill());
+        process.on("SIGUSR1", () => child_process.kill());
+        process.on("SIGUSR2", () => child_process.kill());
+        process.on("uncaughtException", () => child_process.kill());
+
         return new ForkParent<Events>(child_process);
     }
 
